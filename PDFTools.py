@@ -56,7 +56,7 @@ def extractPDF(inFile, outFile, pages):
     f.close()
 
 ########################### 第二部分 ###########################################
-########################## Tkinter事件 #######################
+########################## Tkinter事件 ########################################
 FileList = [] # 全局变量，存放要处理的文件
 
 def addFiles_TK():
@@ -134,10 +134,20 @@ def extract_TK():
     inFile = FileList[0]
 
     def input_Pages():
+        """ 输入想要提取的页码，并开始提取"""
         pages_str=in_TEXT.get(0.0,tkinter.END)
+        pages = re.findall(r'\d+-\d+',pages_str) # 输入格式为 3-7的情况，
+        if pages: 
+            pages = [int(i) for i in pages[0].split('-')]
+            pages = [i for i in range(pages[0],pages[1]+1)] # 补全列表为 [3,4,5,6,7]
+        else:# 输入格式为 1 或 1,5,7 的情况
+            pages = re.findall(r'\d+',pages_str)
+            pages = [int(i) for i in pages]
+        if not pages:
+            subinfo_LABEL.config(text='尚未输入或格式有误，请重新输入！')
+            return
+        
         winSub.destroy() # 销毁子窗体
-        pages = re.findall(r'\d+',pages_str)
-        pages = [int(i) for i in pages]
         options={'defaultextension':'.pdf',
                  'filetypes':[('任意类型', '.*'),('pdf文件', '.pdf')],
                  'initialfile':'out.pdf',
@@ -148,7 +158,7 @@ def extract_TK():
             extractPDF(inFile, outFile.name, pages)
             info_LABEL.config(text='文件提取完成！')
             output1_TEXT.insert(tkinter.END,'完成，输出为：\n  '+outFile.name+'\n') # 原文
-        
+    
     ## 弹出新窗体，继续接收想要提取的页
     winSub = tkinter.Toplevel(root)  
     winSub.geometry('440x240')
@@ -164,7 +174,8 @@ def extract_TK():
     confirm_BUTTON.place(relx=0.6, rely=0.8, relwidth=0.3, relheight=0.15)
 
 
-
+########################### 第三部分 ###########################################
+########################## 窗体 ########################################
 root = tkinter.Tk()
 root.geometry('800x400')
 root.title('PDF合并分割工具')
@@ -172,19 +183,18 @@ root.title('PDF合并分割工具')
 info_LABEL = tkinter.Label(root,text='等待添加文件',justify=tkinter.LEFT,fg='red')
 info_LABEL.place(relx=0.3, rely=0.05, relwidth=0.4, relheight=0.1)
 
-
-## ======================= 布置添加文件、清空文件的按钮 ==========================
+## ======================= 布置添加文件、清空文件的按钮 =========================
 add_BUTTON=tkinter.Button(root,text='添加文件\n(一次可添加多个,\n可多次添加)',command=addFiles_TK)
 add_BUTTON.place(relx=0.1, rely=0.1, relwidth=0.2, relheight=0.2)
 clear_BUTTON=tkinter.Button(root,text='清空文件',command=clearFiles_TK)
 clear_BUTTON.place(relx=0.1, rely=0.35, relwidth=0.2, relheight=0.1)
 
-
-split_BUTTON=tkinter.Button(root,text='分割成单页',command=split_TK)
+## ======================= 布置 分割、提取、合并 的按钮 =========================
+split_BUTTON=tkinter.Button(root,text='分割成单页',command=split_TK)  # 分割按钮
 split_BUTTON.place(relx=0.65, rely=0.1, relwidth=0.2, relheight=0.1)
-split_BUTTON=tkinter.Button(root,text='提取指定页',command=extract_TK)
-split_BUTTON.place(relx=0.65, rely=0.225, relwidth=0.2, relheight=0.1)
-merge_BUTTON=tkinter.Button(root,text='合并多个PDF',command=merge_TK)
+extract_BUTTON=tkinter.Button(root,text='提取指定页',command=extract_TK)  # 提取按钮
+extract_BUTTON.place(relx=0.65, rely=0.225, relwidth=0.2, relheight=0.1)
+merge_BUTTON=tkinter.Button(root,text='合并多个PDF',command=merge_TK)  # 合并按钮
 merge_BUTTON.place(relx=0.65, rely=0.35, relwidth=0.2, relheight=0.1)
 ## ========================= 布置一个显示提示信息的文本框 =======================
 output1_TEXT = tkinter.Text(root)
