@@ -18,6 +18,7 @@ import tkinter.filedialog
 # 缩写字典
 abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
         '{IEEE} Communications Surveys and Tutorials': '{IEEE} Commun. Surveys Tuts.',
+        'IEEE Communications Surveys   Tutorials': '{IEEE} Commun. Surveys Tuts.',
  'Internet Computing': 'Internet Comput.',
  'Journal of Display Technology': 'J. Display Technol.',
  'Journal of Lightwave Technology': 'J. Lightw. Technol.',
@@ -131,6 +132,7 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  '{IEEE} Transactions on Computers': '{IEEE} Trans. Comput.',
  '{IEEE} Transactions on Consumer Electronics': '{IEEE} Trans. Consumer Electron.',
  '{IEEE} Transactions on Control Systems Technology': '{IEEE} Trans. Contr. Syst. Technol.',
+ '{IEEE} Transactions on Cognitive Communications and Networking':'{IEEE} Trans. on Cognitive Commun. and Networking',
  '{IEEE} Transactions on Device and Materials Reliability': '{IEEE} Trans. Device Mat. Rel.',
  '{IEEE} Transactions on Dielectrics and Electrical Insulation': '{IEEE} Trans. Dielect. Elect. Insulation',
  '{IEEE} Transactions on Education': '{IEEE} Trans. Educ.',
@@ -211,7 +213,18 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  '{IEEE} {ASSP} Magazine': '{IEEE} {ASSP} Mag.',
  '{IEEE} {IT} Professional': '{IEEE} {IT} Prof.',
  '{IEEE}/ACM Transactions on Networking': '{IEEE}/ACM Trans. Netw.',
- '{IEEE}/ASME Transactions on Mechatronics': '{IEEE}/ASME Trans. Mechatronics'}
+ '{IEEE}/ASME Transactions on Mechatronics': '{IEEE}/ASME Trans. Mechatronics', 
+ }
+
+conf_abbr={ # 会议部分
+ 'International Conference on Computing, Networking and Communications (ICNC)': 'Int. Conf. Comput. Netw. Commun. (ICNC)',
+ 'European Conference on Antennas and Propagation (EUCAP)':'Eur. Conf. Antennas Propag. (EuCAP)',
+ 'European Conference on Antennas and Propagation (EuCAP)':'Eur. Conf. Antennas Propag. (EuCAP)',
+ 'IEEE International Conference on Communications (ICC)': 'IEEE Int. Conf. Commun. (ICC)',
+ 'IEEE Global Communications Conference (GLOBECOM)': 'IEEE Glob. Commun. Conf. (GLOBECOM)',
+ 'IEEE International Conference on Communications Workshops (ICC Workshops)': 'IEEE Int. Conf. Commun. Workshops (ICCW)',
+ 'IEEE Wireless Communications and Networking Conference (WCNC)': 'IEEE Wireless Commun. Netw. Conf. (WCNC)',
+ }
 ########################### 第一部分 ###########################################
 def replace_abbr(inFile, outFile):
     """ 替换文件
@@ -220,18 +233,50 @@ def replace_abbr(inFile, outFile):
     lines = f.readlines()
     newlines = []
     for line in lines:
+        print(line)
         if 'journal={' in line:
             for k in abbr:
                 k2 = k.replace('{IEEE}','IEEE')
-                if 'journal={'+k+'}' in line:
+                if 'journal={'+k+'}' in line: # 全段匹配
                     line = line.replace('journal={'+k+'}','journal={'+abbr[k]+'}')
                 elif 'journal={'+k2+'}' in line:
                     line = line.replace('journal={'+k2+'}','journal={'+abbr[k]+'}')
+        # 会议缩写替换
+        for k in conf_abbr:
+            line = line.replace(k,'Proc. '+conf_abbr[k])
+        line = keep_capital(line)
+        line = deel_month(line)
         newlines.append(line)
     f.close()
     f = open(outFile, 'w')
     f.writelines(newlines)
     f.close()
+
+def keep_capital(line):
+    """关键字保持大写"""
+    keys = {'UAV', 'UAV' 'mmWave', 'MIMO', 'IoT', '5G', '6G', 'GHz', 'BS', 'MISO', 'QoS', '3D','WSN','MmWave'}
+    for k in keys:
+        line = line.replace(k,'{'+k+'}')
+    return line
+
+def deel_month(line):
+    """月份缩写"""
+    month={'January':'Jan.',
+        'February':'Feb.',
+        'March':'Mar.',
+        'April':'Apr.',
+        'May':'May',
+        'June':'Jun.',
+        'July':'Jul.',
+        'August':'Aug.',
+        'September':'Sep.',
+        'October':'Oct.',
+        'November':'Nov.',
+        'December':'Dec.'}
+    for k in month:
+        line = line.replace(k,month[k])
+    return line 
+    
 
 ########################### 第二部分 ###########################################
 ########################## Tkinter事件 ########################################
