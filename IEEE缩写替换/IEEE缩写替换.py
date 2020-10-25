@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jun 23 09:59:54 2020
-
+pyinstaller -F -w -i icom_256.ico IEEE缩写替换.py
 @author: y1064
 """
 import tkinter
