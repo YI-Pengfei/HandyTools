@@ -219,13 +219,12 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  }
 
 conf_abbr={ # 会议部分
- 'International Conference on Computing, Networking and Communications (ICNC)': 'Int. Conf. Comput. Netw. Commun. (ICNC)',
- 'European Conference on Antennas and Propagation (EUCAP)':'Eur. Conf. Antennas Propag. (EuCAP)',
- 'European Conference on Antennas and Propagation (EuCAP)':'Eur. Conf. Antennas Propag. (EuCAP)',
- 'IEEE International Conference on Communications (ICC)': 'IEEE Int. Conf. Commun. (ICC)',
- 'IEEE Global Communications Conference (GLOBECOM)': 'IEEE Glob. Commun. Conf. (GLOBECOM)',
- 'IEEE International Conference on Communications Workshops (ICC Workshops)': 'IEEE Int. Conf. Commun. Workshops (ICCW)',
- 'IEEE Wireless Communications and Networking Conference (WCNC)': 'IEEE Wireless Commun. Netw. Conf. (WCNC)',
+ 'International Conference on Computing, Networking and Communications': 'Int. Conf. Comput. Netw. Commun.',
+ 'European Conference on Antennas and Propagation':'Eur. Conf. Antennas Propag.',
+ 'IEEE International Conference on Communications': 'IEEE Int. Conf. Commun.',
+ 'IEEE Global Communications Conference': 'IEEE Glob. Commun. Conf.',
+ 'IEEE International Conference on Communications Workshops': 'IEEE Int. Conf. Commun. Workshops',
+ 'IEEE Wireless Communications and Networking Conference': 'IEEE Wireless Commun. Netw. Conf.',
  }
 ########################### 第一部分 ###########################################
 def replace_abbr(inFile, outFile):
@@ -259,7 +258,7 @@ def replace_abbr(inFile, outFile):
 
 def keep_capital(line):
     """关键字保持大写"""
-    keys = {'UAV', 'UAV' 'mmWave', 'MIMO', 'IoT', '5G', '6G', 'GHz', 'BS', 'MISO', 'QoS', '3D','3-D','WSN','MmWave','V2I','Doppler','A2G'}
+    keys = {'UAV', 'MmWave', 'mmWave', 'MIMO', 'IoT', '5G', '6G', 'GHz', 'BS', 'MISO', 'QoS', '3D', '3-D', 'WSN', 'V2I', 'Doppler', 'A2G'}
     for k in keys:
         line = line.replace(k,'{'+k+'}')
     return line
