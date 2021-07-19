@@ -44,7 +44,7 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  '{IEEE} Computational Science and Engineering Magazine': '{IEEE} Comput. Sci. Eng. Mag.',
  '{IEEE} Computer': '{IEEE} Computer',
  '{IEEE} Computer Applications in Power': '{IEEE} Comput. Appl. Power',
- '{IEEE} Computer Architecture Letters': '{IEEE} Comput.Archit. Lett.',
+ '{IEEE} Computer Architecture Letters': '{IEEE} Comput. Archit. Lett.',
  '{IEEE} Computer Graphics and Applications': '{IEEE} Comput. Graph. Appl.',
  '{IEEE} Computing in Science and Engineering': '{IEEE} Comput. Sci. Eng.',
  '{IEEE} Concurrency': '{IEEE} Concurrency',
@@ -61,6 +61,7 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  '{IEEE} Instrumentation and Measurement Magazine': '{IEEE} Instrum. Meas. Mag.',
  '{IEEE} Intelligent Systems': '{IEEE} Intell. Syst.',
  '{IEEE} Internet Computing': '{IEEE} Internet Comput.',
+ '{IEEE} Internet of Things Journal': '{IEEE} Internet Thing J.',
  '{IEEE} Journal of Oceanic Engineering': '{IEEE} J. Oceanic Eng.',
  '{IEEE} Journal of Quantum Electronics': '{IEEE} J. Quantum Electron.',
  '{IEEE} Journal of Robotics and Automation': '{IEEE} J. Robot. Automat.',
@@ -210,6 +211,7 @@ abbr = {'Communications Surveys and Tutorials': 'Commun. Surveys Tuts.',
  '{IEEE} Transactions on Wireless Communications': '{IEEE} Trans. Wireless Commun.',
  '{IEEE} Translation Journal on Magnetics in Japan': '{IEEE} Transl. J. Magn. Jpn.',
  '{IEEE} Wireless Communications Magazine': '{IEEE} Wireless Commun. Mag.',
+ '{IEEE} Wireless Communications Letters': '{IEEE} Wireless Commun. Lett.',
  '{IEEE} {ASSP} Magazine': '{IEEE} {ASSP} Mag.',
  '{IEEE} {IT} Professional': '{IEEE} {IT} Prof.',
  '{IEEE}/ACM Transactions on Networking': '{IEEE}/ACM Trans. Netw.',
@@ -234,6 +236,7 @@ def replace_abbr(inFile, outFile):
     newlines = []
     for line in lines:
         print(line)
+        # 期刊缩写替换
         if 'journal={' in line:
             for k in abbr:
                 k2 = k.replace('{IEEE}','IEEE')
@@ -244,7 +247,9 @@ def replace_abbr(inFile, outFile):
         # 会议缩写替换
         for k in conf_abbr:
             line = line.replace(k,'Proc. '+conf_abbr[k])
+        # 保持关键词大写
         line = keep_capital(line)
+        # 月份缩写
         line = deel_month(line)
         newlines.append(line)
     f.close()
@@ -254,7 +259,7 @@ def replace_abbr(inFile, outFile):
 
 def keep_capital(line):
     """关键字保持大写"""
-    keys = {'UAV', 'UAV' 'mmWave', 'MIMO', 'IoT', '5G', '6G', 'GHz', 'BS', 'MISO', 'QoS', '3D','WSN','MmWave'}
+    keys = {'UAV', 'UAV' 'mmWave', 'MIMO', 'IoT', '5G', '6G', 'GHz', 'BS', 'MISO', 'QoS', '3D','3-D','WSN','MmWave','V2I','Doppler','A2G'}
     for k in keys:
         line = line.replace(k,'{'+k+'}')
     return line
