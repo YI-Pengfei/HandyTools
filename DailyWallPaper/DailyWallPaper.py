@@ -35,14 +35,19 @@ class GetImage():
     def getImage(self, downloadFolder):
         """ 从网站上爬取壁纸，并下载
         downloadFolder: 下载路径
-        source: 壁纸源网站
+        source: 壁纸源网站：
+                    1. WallHaven
+                    2. Bing必应
+                    3. BiAn彼岸 (可选分类）
         """
+        ### 新建下载目录文件夹
         if not os.path.exists(downloadFolder):
-            os.makedirs(downloadFolder)        
+            os.makedirs(downloadFolder)    
+            
         if self.source=='wallhaven':
             url = 'https://alpha.wallhaven.cc/wallpaper/' 
             response = requests.get(url) 
-            print(response.text)
+            # print(response.text)
             soup = BeautifulSoup(response.text,'html.parser')
             imgs = soup.find_all('img')
             length = len(imgs)
@@ -77,6 +82,42 @@ class GetImage():
                 file.write(response.content)
             return jpgFile    
 
+        elif self.source=='bian':
+            classify = 'fengjing' ## 分类为风景
+            url = 'http://www.netbian.com/%s'%classify  ### 首页
+            response = requests.get(url) 
+            soup = BeautifulSoup(response.text,'html.parser')
+            ### 1. 提取出首页图片的子网址(有多个)
+            todos = soup.body.find_all('li')
+            urls = []
+            for t in todos:
+                try: 
+                    if 'desk' in t.a['href']:
+                        urls.append('http://www.netbian.com'+t.a['href'])
+                except:
+                    continue
+            
+            ### 2. 随机取一个图，下载子页面下的大图
+            url = random.choice(urls)
+            downloadFolder = os.getcwd()+'\\temp'
+            response = requests.get(url) 
+            print(response.text)
+            soup = BeautifulSoup(response.text,'html.parser')
+            imgs = soup.find_all('img')
+            
+            for img in imgs:
+                if img.get('title'):
+                    rawUrl = img.get('src')
+                    rawId = rawUrl.split('/')[-1]
+                    raw = requests.get(rawUrl) 
+                    imgFile = os.path.join(downloadFolder, rawId)
+                    with open(imgFile,'wb') as f:
+                        f.write(raw.content)
+        
+                    print(imgFile)
+                    return imgFile
+
+
     def setWallpaper(self,file):
         """ 设置文件file为壁纸 """
         ctypes.windll.user32.SystemParametersInfoW(20, 0, file, 0)  # 设置桌面
@@ -95,6 +136,11 @@ def chooseSource_Bing_TK():
     """ 选择壁纸源 """
     G.chooseSource('Bing')
     info_LABEL.config(text='壁纸源：Bing')
+
+def chooseSource_BiAn_TK():
+    """ 选择壁纸源 """
+    G.chooseSource('bian')
+    info_LABEL.config(text='壁纸源：彼岸')
 
 def setWallPaper():
     outPath = os.getcwd()+'\\temp'
@@ -122,9 +168,11 @@ info_LABEL.place(relx=0.3, rely=0.6, relwidth=0.4, relheight=0.1)
 BUTTON_changeSource=tkinter.Button(root,text='WallHaven',command=chooseSource_wallhaven_TK)
 BUTTON_changeSource.place(relx=0.1, rely=0.1, relwidth=0.2, relheight=0.2)
 
-BUTTON_changeSource2=tkinter.Button(root,text='Bing',command=chooseSource_Bing_TK)
+BUTTON_changeSource2=tkinter.Button(root,text='必应',command=chooseSource_Bing_TK)
 BUTTON_changeSource2.place(relx=0.4, rely=0.1, relwidth=0.2, relheight=0.2)
 
+BUTTON_changeSource3=tkinter.Button(root,text='彼岸',command=chooseSource_BiAn_TK)
+BUTTON_changeSource3.place(relx=0.7, rely=0.1, relwidth=0.2, relheight=0.2)
 
 BUTTON_setWallPaper=tkinter.Button(root,text='设置壁纸',command=setWallPaper)
 BUTTON_setWallPaper.place(relx=0.1, rely=0.35, relwidth=0.2, relheight=0.2)
